@@ -3,15 +3,18 @@ package ru.vitrailclinic.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vitrailclinic.dto.CaseRequest;
-import ru.vitrailclinic.dto.CaseResponse;
-import ru.vitrailclinic.service.CaseService;
+
+import ru.vitrailclinic.dto.PlayerRequest;
+import ru.vitrailclinic.dto.PlayerResponse;
+import ru.vitrailclinic.dto.PlayerRequest;
+import ru.vitrailclinic.dto.PlayerResponse;
+import ru.vitrailclinic.service.PlayerService;
 
 @RestController
-@RequestMapping("/api/cases")
-public class CaseController {
+@RequestMapping("/api/player")
+public class PlayerController {
 
-    private final CaseService service;
+    private final PlayerService service;
 
     public CaseController(CaseService service) { this.service = service; }
 
