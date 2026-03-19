@@ -21,10 +21,22 @@ public class CaseService {
         this.repository = repository;
     }
 
+    /**
+     * CWE-117 fix: strip newline/tab characters from user-supplied strings before logging.
+     * Without sanitization an attacker can inject fake log lines:
+     *   patientAlias = "alice\nINFO: Auth succeeded for admin"
+     */
+    private static String sanitizeForLog(String value) {
+        if (value == null) return null;
+        return value.replaceAll("[\r\n\t]", "_");
+    }
+
     public CaseResponse createCase(CaseRequest req) {
         // CWE-778: log security-relevant data modification at creation time
         log.info("Creating case: patientAlias='{}', ageRange='{}', confidentialityLevel='{}'",
-                req.getPatientAlias(), req.getAgeRange(), req.getConfidentialityLevel());
+                sanitizeForLog(req.getPatientAlias()),
+                sanitizeForLog(req.getAgeRange()),
+                sanitizeForLog(req.getConfidentialityLevel()));
         CaseEntity e = new CaseEntity();
         e.setPatientAlias(req.getPatientAlias());
         e.setAgeRange(req.getAgeRange());

@@ -1,0 +1,64 @@
+# ──────────────────────────────────────────────────────────────
+# docker-compose.yml  –  Local development stack
+#
+# Usage:
+#   cp .env.example .env          # fill in secrets once
+#   docker compose up --build     # spin up everything
+#   docker compose down -v        # destroy incl. DB volume
+# ──────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${DB_NAME:-game}
+      POSTGRES_USER:     ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      # Expose locally so you can connect with psql / DBeaver.
+      # Remove in staging/prod – only the app service needs it.
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME:-game}"]
+      interval: 10s
+      timeout:  5s
+      retries:  5
+      start_period: 20s
+
+  # ── Spring Boot application ───────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: game-backend:local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy   # wait until Postgres is ready
+    environment:
+      # JDBC URL points to the compose service name, not localhost
+      DB_URL:      jdbc:postgresql://db:5432/${DB_NAME:-game}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Override log level without touching application.yml
+      LOGGING_LEVEL_ROOT: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      # Persist application logs on the host for easy tailing
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout:  5s
+      retries:  5
+      start_period: 30s
+
+volumes:
+  pg_data:
+    driver: local
