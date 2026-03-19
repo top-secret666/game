@@ -11,22 +11,22 @@ import ru.vitrailclinic.dto.PlayerResponse;
 import ru.vitrailclinic.service.PlayerService;
 
 @RestController
-@RequestMapping("/api/player")
+@RequestMapping("/api/players")
 public class PlayerController {
 
     private final PlayerService service;
 
-    public CaseController(CaseService service) { this.service = service; }
+    public PlayerController(PlayerService service) { this.service = service; }
 
-    @PostMapping
-    public ResponseEntity<CaseResponse> createCase(@Valid @RequestBody CaseRequest req) {
-        CaseResponse res = service.createCase(req);
+    @PostMapping("/register")
+    public ResponseEntity<PlayerResponse> createPlayer(@Valid @RequestBody PlayerRequest req) {
+        PlayerResponse res = service.createPlayer(req);
         return ResponseEntity.status(201).body(res);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CaseResponse> getCase(@PathVariable Long id) {
-        CaseResponse res = service.getCase(id);
+    public ResponseEntity<PlayerResponse> getPlayer(@PathVariable Long id) {
+        PlayerResponse res = service.getPlayer(id);
         return ResponseEntity.ok(res);
     }
 

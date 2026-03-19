@@ -1,20 +1,22 @@
-    package ru.vitrailclinic.service;
+package ru.vitrailclinic.service;
 
-    import org.springframework.security.crypto.password.PasswordEncoder;
-    import org.springframework.stereotype.Service;
-    
-    import ru.vitrailclinic.model.CaseEntity;
-    import ru.vitrailclinic.model.PlayerEntity;
-    import ru.vitrailclinic.repository.PlayerRepository;
-    
-    @Service
-    public class PlayerService {
-    
-        private final PlayerRepository repository;
-        private final PasswordEncoder passwordEncoder;
-    
-        // TODO: конструктор с двумя параметрами (Constructor Injection)
-        public PlayerService(PlayerRepository repository, PasswordEncoder passwordEncoder) {
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import ru.vitrailclinic.model.CaseEntity;
+import ru.vitrailclinic.model.PlayerEntity;
+import ru.vitrailclinic.repository.PlayerRepository;
+import ru.vitrailclinic.dto.PlayerResponse;
+import ru.vitrailclinic.dto.RegisterRequest;
+
+@Service
+public class PlayerService {
+
+    private final PlayerRepository repository;
+    private final PasswordEncoder passwordEncoder;
+
+    // TODO: конструктор с двумя параметрами (Constructor Injection)
+    public PlayerService(PlayerRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -26,8 +28,7 @@
             }
             // TODO 2: создай PlayerEntity
             PlayerEntity player = new PlayerEntity(player.setUsername(req.getUsername()));
-);
-
+        }
             // TODO 3: установи passwordHash через passwordEncoder.encode(req.getPassword())
             player.setPasswordHash(passwordEncoder.encode(req.getPassword()));
 
@@ -42,7 +43,7 @@
             response.setUsername(savedPlayer.getUsername());
 
             return response;
-        }
+        
        private PlayerResponse toDto(PlayerEntity e) {
        PlayerResponse response = new PlayerResponse();
 
@@ -51,11 +52,11 @@
     return response;
     }
     
-      public PlayerResponse register(RegisterRequest req) {
-      // 1. Проверка
-    if (repository.existsByUsername(req.getUsername())) {
-        throw new IllegalArgumentException("Username already taken");
-    }
+    public PlayerResponse register(RegisterRequest req) {
+        // 1. Проверка
+        if (repository.existsByUsername(req.getUsername())) {
+            throw new IllegalArgumentException("Username already taken");
+        }
 
     // 2. Создание и заполнение (не забудь имя!)
     PlayerEntity player = new PlayerEntity();
@@ -70,5 +71,6 @@
     // 5. Преобразование через твой метод toDto
     return toDto(savedPlayer); 
 }
-}
 
+
+}
