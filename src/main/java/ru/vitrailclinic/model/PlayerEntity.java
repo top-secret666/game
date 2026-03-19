@@ -18,21 +18,17 @@ import java.time.LocalDateTime;
     
         // TODO: добавь аннотации — поле уникально и обязательно, макс 50 символов
         @Column(unique = true)
-        @NotBlank
         @Size(min = 3, max = 50)
         private String username;
     
         // TODO: добавь аннотации — поле уникально и обязательно
         @Column(unique = true)
-        @NotBlank
-        @Email
         private String email;
     
         @Column(name = "password_hash", nullable = false)
         private String passwordHash;
     
         // TODO: добавь @Column с default значением 1, nullable = false
-        @Column(nullable = false,  columnDefinition = "int default 1")
         private int level;
     
         // TODO: добавь @Column с default значением 0, nullable = false
@@ -67,6 +63,8 @@ import java.time.LocalDateTime;
             this.rank = PlayerRank.APPRENTICE; 
         }
         }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }

@@ -4,9 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ru.vitrailclinic.dto.PlayerRequest;
-import ru.vitrailclinic.dto.PlayerResponse;
-import ru.vitrailclinic.dto.PlayerRequest;
+import ru.vitrailclinic.dto.RegisterRequest;
 import ru.vitrailclinic.dto.PlayerResponse;
 import ru.vitrailclinic.service.PlayerService;
 
@@ -19,7 +17,7 @@ public class PlayerController {
     public PlayerController(PlayerService service) { this.service = service; }
 
     @PostMapping("/register")
-    public ResponseEntity<PlayerResponse> createPlayer(@Valid @RequestBody PlayerRequest req) {
+    public ResponseEntity<PlayerResponse> createPlayer(@Valid @RequestBody RegisterRequest req) {
         PlayerResponse res = service.createPlayer(req);
         return ResponseEntity.status(201).body(res);
     }
