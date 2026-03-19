@@ -41,9 +41,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleAny(Exception ex, WebRequest request) {
-        // CWE-778: log all unhandled exceptions — critical for incident response and forensic analysis
+        // CWE-778: log full exception server-side for incident response and forensic analysis
         log.error("Unhandled exception for request [{}]", request.getDescription(false), ex);
-        ApiError err = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal error", List.of(ex.getMessage()));
+        // CWE-209 fix: never expose internal exception messages (stack traces, DB schema, etc.) to the client
+        ApiError err = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal error",
+                List.of("An unexpected error occurred. Please contact support."));
         return new ResponseEntity<>(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -33,17 +33,19 @@
 ## Progress
 
 - [✅] Migration Plan Generated ([plan.md](./plan.md))
-- [⌛️] Version Control Setup (creating branch `fix/cwe-798-hardcoded-credentials`)
+- [✅] Version Control Setup (branch: `appmod/java-upgrade-20260319060904`)
 - Code Migration
-    - [⌛️] `src/main/resources/application.yml` — replace hardcoded credentials with env vars
+    - [✅] `src/main/resources/application.yml` — replaced hardcoded credentials with env vars
+    - [✅] `.env.example` — added env var documentation
+    - [✅] `.gitignore` — added exclusions
 - Validation & Fixing
     - Build Environment
         - [✅] JAVA_HOME set to `C:\Program Files\Java\jdk-17`
         - [✅] MAVEN_HOME set to `C:\Program Files\Apache\maven`
-    - [ ] Build and Fix
-    - [ ] CVE Check
-    - [ ] Completeness Check
-    - [ ] Build Validation
-- [ ] Final Summary
-    - [ ] Final Code Commit
-    - [ ] Migration Summary Generation
+    - [✅] Build and Fix (succeeded round 1 — no errors)
+    - [✅] CVE Check (no new CVEs introduced)
+    - [✅] Completeness Check (no other hardcoded credentials found)
+    - [✅] Build Validation (final build successful)
+- [✅] Final Summary ([summary-cwe798.md](../.github/appmod/code-migration/summary-cwe798.md))
+    - [✅] Final Code Commit (`c962085b140482c99b129a5d2d67fcd7d316195c`)
+    - [✅] Migration Summary Generation

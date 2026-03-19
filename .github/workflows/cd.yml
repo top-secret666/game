@@ -1,0 +1,88 @@
+# ──────────────────────────────────────────────────────────────
+# CD Workflow  –  deploy to remote server via SSH
+#
+# Triggered automatically when CI completes successfully on main.
+# Requires the following GitHub Secrets to be set in the repo:
+#
+#   DEPLOY_HOST        IP or hostname of your server
+#   DEPLOY_USER        SSH user (e.g. ubuntu)
+#   DEPLOY_SSH_KEY     Private SSH key (RSA or Ed25519)
+#   DEPLOY_PATH        Absolute path on the server  (e.g. /opt/game)
+#   DB_USERNAME        Postgres username
+#   DB_PASSWORD        Postgres password (never put in code!)
+# ──────────────────────────────────────────────────────────────
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches:  ["main"]
+    types:     [completed]
+
+env:
+  REGISTRY:   ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-22.04
+    # Only deploy when CI passes (not on failure)
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    environment:
+      name: production
+      url: http://${{ secrets.DEPLOY_HOST }}:8080
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # ── SSH into the server and pull + restart the stack ──────
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key:      ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+
+            # Navigate to the deployment directory
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # Write runtime secrets into .env (file is gitignored on server)
+            cat > .env << 'EOF'
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            EOF
+
+            # Pull the latest image tag (sha-based) that CI just pushed
+            IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            docker pull "${IMAGE}"
+
+            # Override the app image in compose with the exact new tag
+            export APP_IMAGE="${IMAGE}"
+
+            # Rolling restart: bring up the new container, then remove the old one
+            docker compose pull app
+            docker compose up -d --no-deps --remove-orphans app
+
+            # Safety: wait for the health check to go green (up to 60 s)
+            TRIES=0
+            until docker compose ps app | grep -q "healthy" || [ $TRIES -ge 12 ]; do
+              echo "Waiting for app to be healthy... ($TRIES/12)"
+              sleep 5
+              TRIES=$((TRIES + 1))
+            done
+
+            if [ $TRIES -ge 12 ]; then
+              echo "❌ App did not become healthy in time. Rolling back."
+              docker compose rollout --rollback app 2>/dev/null || true
+              exit 1
+            fi
+
+            echo "✅ Deployment successful."
+
+            # Cleanup dangling images to free disk space
+            docker image prune -f
