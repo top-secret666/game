@@ -2,7 +2,9 @@
     
     import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDateTime;
     
@@ -52,13 +54,17 @@ import java.time.LocalDateTime;
         public void onCreate() {
             
         this.createdAt = Instant.now();
-
-         if (this.level == null) {
-            this.level = 1; // Устанавливаем дефолт перед сохранением
+    
+         if (this.level == 0) {
+            this.level = 1; 
+        }
+        
+        if (this.experience == 0) {
+            this.experience = 0; 
         }
         
         if (this.rank == null) {
-            this.rank = PlayerRank.APPRENTICE; // Устанавливаем начальный ранг
+            this.rank = PlayerRank.APPRENTICE; 
         }
         }
 
