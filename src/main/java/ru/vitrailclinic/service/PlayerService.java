@@ -3,11 +3,10 @@ package ru.vitrailclinic.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ru.vitrailclinic.model.CaseEntity;
 import ru.vitrailclinic.model.PlayerEntity;
 import ru.vitrailclinic.repository.PlayerRepository;
-import ru.vitrailclinic.dto.PlayerResponse;
 import ru.vitrailclinic.dto.RegisterRequest;
+import ru.vitrailclinic.dto.PlayerResponse;
 
 @Service
 public class PlayerService {
@@ -27,8 +26,9 @@ public class PlayerService {
                 throw new IllegalArgumentException("Username already taken");
             }
             // TODO 2: создай PlayerEntity
-            PlayerEntity player = new PlayerEntity(player.setUsername(req.getUsername()));
-        }
+            PlayerEntity player = new PlayerEntity();
+            player.setUsername(req.getUsername());
+        
             // TODO 3: установи passwordHash через passwordEncoder.encode(req.getPassword())
             player.setPasswordHash(passwordEncoder.encode(req.getPassword()));
 
@@ -36,41 +36,42 @@ public class PlayerService {
             PlayerEntity savedPlayer = repository.save(player);
 
             // TODO 5: преобразуй в PlayerResponse и верни
-
-            PlayerResponse response = new PlayerResponse();
-
-            response.setId(savedPlayer.getId());
-            response.setUsername(savedPlayer.getUsername());
-
-            return response;
-        
-       private PlayerResponse toDto(PlayerEntity e) {
-       PlayerResponse response = new PlayerResponse();
-
-        response.setId(e.getId());
-        response.setUsername(e.getUsername());
-    return response;
-    }
-    
-    public PlayerResponse register(RegisterRequest req) {
-        // 1. Проверка
-        if (repository.existsByUsername(req.getUsername())) {
-            throw new IllegalArgumentException("Username already taken");
+            return toDto(savedPlayer);
         }
 
-    // 2. Создание и заполнение (не забудь имя!)
-    PlayerEntity player = new PlayerEntity();
-    player.setUsername(req.getUsername()); // Добавили имя
+
+       private PlayerResponse toDto(PlayerEntity e) {
+       PlayerResponse response = new PlayerResponse();
+        response.setId(e.getId());
+        response.setUsername(e.getUsername());
+        response.setEmail(e.getEmail());
+        response.setLevel(e.getLevel());
+        response.setExperience(e.getExperience());
+        response.setRank(e.getRank());
+
+       return response;
+    }
     
-    // 3. Пароль
+public PlayerResponse createPlayer(RegisterRequest req) {
+    // 1. Проверка
+    if (repository.existsByUsername(req.getUsername())) {
+        throw new IllegalArgumentException("Username already taken");
+    }
+    
+    PlayerEntity player = new PlayerEntity();
+    player.setUsername(req.getUsername());
     player.setPasswordHash(passwordEncoder.encode(req.getPassword()));
-
-    // 4. Сохранение
+    
     PlayerEntity savedPlayer = repository.save(player);
-
-    // 5. Преобразование через твой метод toDto
-    return toDto(savedPlayer); 
+    
+    return toDto(savedPlayer);
 }
 
+ public PlayerResponse getPlayer(Long id) {
+    PlayerEntity player = repository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Player not found with id: " + id));
+
+    return toDto(player);
+}
 
 }
