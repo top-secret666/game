@@ -12,3 +12,13 @@
 /.db/
 *.db
 /.DS_Store
+
+# drawio Chrome runtime data (auto-generated, not project code)
+.drawio-chrome/
+
+# Environment / secrets — NEVER commit real credentials
+.env
+*.env.local
+
+# Log output directory
+/logs/
