@@ -1,3 +1,7 @@
+<div align="center">
+<img width="1536" height="1024" alt="cb3fbeac-57e9-4442-b08b-f8b873b8d1ec" src="https://github.com/user-attachments/assets/b5ae8054-805f-4bf2-bf37-699a9d8c79e2" />
+</div>
+
 # Vitrail Clinic — Game Backend (skeleton)
 
 Это стартовый skeleton Spring Boot проекта для обучения через разработку игры.
