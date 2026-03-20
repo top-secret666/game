@@ -22,3 +22,7 @@
 
 # Log output directory
 /logs/
+
+# Local learning docs — theory, practice, design notes (not for GitHub)
+/docs/
+/reports/
