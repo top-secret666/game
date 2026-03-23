@@ -19,7 +19,7 @@ public class PlayerService {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
-        public PlayerResponse register(RegisterRequest req) {
+        public PlayerResponse createPlayer(RegisterRequest req) {
             // TODO 1: проверь, что username ещё не занят
             //         если занят — брось IllegalArgumentException("Username already taken")
             if (repository.existsByUsername(req.getUsername())) {
@@ -52,21 +52,6 @@ public class PlayerService {
        return response;
     }
     
-public PlayerResponse createPlayer(RegisterRequest req) {
-    // 1. Проверка
-    if (repository.existsByUsername(req.getUsername())) {
-        throw new IllegalArgumentException("Username already taken");
-    }
-    
-    PlayerEntity player = new PlayerEntity();
-    player.setUsername(req.getUsername());
-    player.setPasswordHash(passwordEncoder.encode(req.getPassword()));
-    
-    PlayerEntity savedPlayer = repository.save(player);
-    
-    return toDto(savedPlayer);
-}
-
  public PlayerResponse getPlayer(Long id) {
     PlayerEntity player = repository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Player not found with id: " + id));
