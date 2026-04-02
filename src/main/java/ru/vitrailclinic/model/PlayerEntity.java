@@ -1,12 +1,7 @@
  package ru.vitrailclinic.model;
     
     import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
-import java.time.LocalDateTime;
     
     @Entity
     @Table(name = "players")
@@ -16,27 +11,21 @@ import java.time.LocalDateTime;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
     
-        // TODO: добавь аннотации — поле уникально и обязательно, макс 50 символов
-        @Column(unique = true)
-        @Size(min = 3, max = 50)
+        @Column(unique = true, nullable = false)
+
         private String username;
     
-        // TODO: добавь аннотации — поле уникально и обязательно
         @Column(unique = true)
         private String email;
     
         @Column(name = "password_hash", nullable = false)
         private String passwordHash;
     
-        // TODO: добавь @Column с default значением 1, nullable = false
         private int level;
     
-        // TODO: добавь @Column с default значением 0, nullable = false
         @Column ( nullable = false,columnDefinition = "int default 0")
         private long experience;
     
-        // TODO: что за аннотации нужны для хранения строки-перечисления (APPRENTICE, JOURNEYMAN...)?
-        @NotNull(message = "The rank must be specified")
         @Column(nullable = false)                   
         @Enumerated(EnumType.STRING) 
         private PlayerRank rank;
@@ -44,8 +33,6 @@ import java.time.LocalDateTime;
         @Column(name = "created_at", nullable = false, updatable = false)
         private Instant createdAt;
     
-        // TODO: метод @PrePersist — установи значения по умолчанию
-        // level=1, experience=0, rank=APPRENTICE, createdAt=Instant.now()
         @PrePersist
         public void onCreate() {
             
@@ -53,10 +40,6 @@ import java.time.LocalDateTime;
     
          if (this.level == 0) {
             this.level = 1; 
-        }
-        
-        if (this.experience == 0) {
-            this.experience = 0; 
         }
         
         if (this.rank == null) {
@@ -83,6 +66,9 @@ import java.time.LocalDateTime;
     
     public PlayerRank getRank() { return rank; }
     public void setRank(PlayerRank rank) { this.rank = rank; }
+    
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
     }
       
