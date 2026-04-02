@@ -46,6 +46,7 @@ public class SecurityConfig {
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/players/register").permitAll()
                 .anyRequest().authenticated()           // all endpoints require a valid identity
             )
             .httpBasic(Customizer.withDefaults());      // TODO Quest: replace with JWT filter chain
