@@ -41,12 +41,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // Stateless REST API — CSRF token not applicable (no browser session/cookie auth)
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .anyRequest().permitAll()           // all endpoints are accessible without authentication
-            )
-            .httpBasic(Customizer.withDefaults());      // TODO Quest: replace with JWT filter chain
+            .csrf().disable()
+            .authorizeHttpRequests()
+                .anyRequest().permitAll()
+            .and()
+            .httpBasic(); // TODO Quest: replace with JWT filter chain
         return http.build();
     }
 
