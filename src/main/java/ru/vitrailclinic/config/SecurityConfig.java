@@ -42,11 +42,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             // Stateless REST API — CSRF token not applicable (no browser session/cookie auth)
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(sm ->
-                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().authenticated()           // all endpoints require a valid identity
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .anyRequest().permitAll()           // all endpoints are accessible without authentication
             )
             .httpBasic(Customizer.withDefaults());      // TODO Quest: replace with JWT filter chain
         return http.build();
