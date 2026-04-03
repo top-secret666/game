@@ -57,10 +57,10 @@ public class SecurityConfig {
      * TODO Quest: remove this bean and implement UserDetailsService backed by the database.
      */
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails dev = User.builder()
                 .username(devUsername)
-                .password(passwordEncoder().encode(devPassword))
+                .password(passwordEncoder.encode(devPassword))
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(dev);
