@@ -54,8 +54,8 @@ class CaseControllerTest {
     @Test
     @DisplayName("POST /api/cases valid request → 201 with full response body")
     void createCase_validRequest_returns201WithBody() throws Exception {
-        CaseRequest req = request("Alice", "30-40", "HIGH");
-        CaseResponse resp = response(1L, "DRAFT", "Alice", "30-40", "HIGH");
+        CaseRequest req = request("Alice", "30-40", "CONFIDENTIAL");
+        CaseResponse resp = response(1L, "DRAFT", "Alice", "30-40", "CONFIDENTIAL");
         when(service.createCase(any())).thenReturn(resp);
 
         mockMvc.perform(post("/api/cases")
@@ -66,7 +66,7 @@ class CaseControllerTest {
                 .andExpect(jsonPath("$.status").value("DRAFT"))
                 .andExpect(jsonPath("$.patientAlias").value("Alice"))
                 .andExpect(jsonPath("$.ageRange").value("30-40"))
-                .andExpect(jsonPath("$.confidentialityLevel").value("HIGH"))
+                .andExpect(jsonPath("$.confidentialityLevel").value("CONFIDENTIAL"))
                 .andExpect(jsonPath("$.createdAt").exists());
     }
 
