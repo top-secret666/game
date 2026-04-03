@@ -24,6 +24,9 @@ import org.springframework.security.web.SecurityFilterChain;
  *   3. Replace httpBasic() with addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).
  *   4. Remove InMemoryUserDetailsManager — load users from the database instead.
  */
+import org.springframework.context.annotation.Profile;
+
+@Profile("!test")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
