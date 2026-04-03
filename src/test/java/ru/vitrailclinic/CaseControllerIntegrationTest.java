@@ -2,6 +2,7 @@ package ru.vitrailclinic;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -33,13 +34,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * These tests are intentionally heavier — reserve them for CI pipelines.
  * Unit tests and slice tests cover the same logic at lower cost.
  */
-// @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-// @Testcontainers
-// @ActiveProfiles("test")
-// @Import(TestSecurityConfig.class)
-// class CaseControllerIntegrationTest {
-
-// Интеграционные тесты с Testcontainers временно отключены, чтобы не требовался Docker.
+@Disabled("Integration tests disabled in CI to avoid Docker")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@ActiveProfiles("test")
+@Import(TestSecurityConfig.class)
+class CaseControllerIntegrationTest {
 
     @Container
     @ServiceConnection
